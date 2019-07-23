@@ -38,13 +38,13 @@
           <h2> ${artistInfo.link} </h2>
         `
 
-        var albums = await searchAPI(artistInfo.name);
+        var albums = await searchAPI(artistInfo.name, artistId);
 
         document.querySelector("#albums").innerHTML = albums.join("");
 
       }
 
-      searchAPI = async (artist) => {
+      searchAPI = async (artist, artistId) => {
             var response = await fetch("https://deezerdevs-deezer.p.rapidapi.com/search?q=" + artist, {
                 headers: new Headers({
                     "X-RapidAPI-Host": "deezerdevs-deezer.p.rapidapi.com",
@@ -53,11 +53,43 @@
                 }
             );
             var json = await response.json();
-            var albums = json.data.map(track => track.album);
 
+            var albums = json.data
+                        .filter(track => track.artist.id == artistId)
+                        .map(track => track.album);
+            
 
-            return albums.map(album => `
-                  <div class="col-md-2">
+            var albumsIds = albums.map(al => al.id);
+
+            var filteredArray = albums.filter((album, index) => 
+                            //is the position of the current id == to the position he has in the album array?
+                            //if so, it means it is the first it appear! => we want it
+                            //if not (so index !== indexOf), we already have it, so please skip it
+                            albumsIds.indexOf(album.id) == index);
+
+            // console.log(albums);
+            // var filteredArray = [];
+            // albums.forEach((album, index) => {
+            //   console.log(`IndexOf: ${albumsIds.indexOf(album.id)} - ActualIndex ${index}`);
+            //   if (albumsIds.indexOf(album.id) === index){
+            //     filteredArray.push(album);
+            //   }
+            // });
+
+            // var filteredArray = [];
+            // var containedId = []; //array for ids
+
+            // for (var i = 0; i < albums.length; i++){
+            //   if (containedId.indexOf(albums[i].id) === -1){ //if the array of ids does not contain the current album id
+            //     containedId.push(albums[i].id); //we add it to the array of ids
+            //     filteredArray.push(albums[i]);
+            //   }
+            // }
+
+            // console.log(containedId);
+            // console.log(filteredArray);
+
+            return filteredArray.map(album => `<div class="col-md-2">
                         <img src="${album.cover_medium}" class="img-fluid" >
                         <div>${album.title}</div>
                     </div>`)
