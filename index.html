@@ -21,12 +21,10 @@
 
 
     <script>
-    
         var groupsIlike = [ "eminem", "metallica", "queen" ]
         const SEARCH_ENDPOINT = "https://deezerdevs-deezer.p.rapidapi.com/search?q=";
 
-        window.onload = async () => {
-
+        window.onload = () => {
             var main = document.querySelector("#main");
 
             groupsIlike.forEach(async (group) =>{
@@ -82,6 +80,5 @@
         }
 
     </script>
-
   </body>
 </html>
